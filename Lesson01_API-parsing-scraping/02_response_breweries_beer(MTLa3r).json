@@ -1,0 +1,11 @@
+{'data': [{'createDate': '2012-01-03 02:42:13',
+           'id': 'VEY3Xa',
+           'isInBusiness': 'Y',
+           'isVerified': 'N',
+           'name': 'Zero Gravity Craft Brewery',
+           'nameShortDisplay': 'Zero Gravity Craft',
+           'status': 'verified',
+           'statusDisplay': 'Verified',
+           'updateDate': '2018-11-02 02:15:01'}],
+ 'message': 'READ ONLY MODE: Request Successful',
+ 'status': 'success'}
