@@ -22,7 +22,7 @@ else:
 
 # ====================================================================================
 
-# .. реализовать функцию, записывающую собранные вакансии в созданную БД
+# 1... реализовать функцию, записывающую собранные вакансии в созданную БД
 def vacancy_to_db(vacancies, clt):
     count = vacancies.count(axis=0)[0]
     for x in range(count):
@@ -38,7 +38,14 @@ def vacancy_to_db(vacancies, clt):
 
 
 # ====================================================================================
-# после ввода параметров скрипта :
+# 2. Написать функцию, которая производит поиск и выводит на экран вакансии
+#    с заработной платой больше введённой суммы.
+# Поиск должен происходить по 2-ум полям (минимальной и максимальной зарплате)
+def search_vacancy_max_salary(sal, clt):
+    for vc in clt.find({'$or': [{'min': {'$gte': sal}}, {'max': {'$gte': sal}}]}):
+        pprint(vc)
+
+
 # ====================================================================================
 # тест
 # vacancies_new.start('hh', 3)
@@ -57,11 +64,14 @@ db = client['vacancies']
 vacancy_to_db(vacancies_hh_df, db.hh)
 vacancy_to_db(vacancies_sj_df, db.sj)
 
+search_vacancy_max_salary(70000, db.hh)
+search_vacancy_max_salary(70000, db.sj)
+
 # для проверки записи в БД выведем вакансии с '_id' = 41065436 и 35160473
-for vc in db.hh.find({'_id': 41065436}):
-    pprint(vc)
-for vc in db.sj.find({'_id': 35160473}):
-    pprint(vc)
+# for vc in db.hh.find({'_id': 41065436}):
+#     pprint(vc)
+# for vc in db.sj.find({'_id': 35160473}):
+#     pprint(vc)
 
 # вывод всех вакансий по HH из БД
 # for vc in db.hh.find({}):
