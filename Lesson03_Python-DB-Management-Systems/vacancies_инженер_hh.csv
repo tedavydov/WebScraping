@@ -7,7 +7,7 @@ _id,name,min,max,val,employer,address,link
 41114015,Инженер ПТО,80000.0,,руб,ООО Нова-Строй,Москва,https://ramenskoye.hh.ru/vacancy/41114015?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
 41085819,Главный инженер,,,, Hyatt Regency Tashkent,Ташкент,https://ramenskoye.hh.ru/vacancy/41085819?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
 41104896,Инженер-эколог,500.0,,белруб,УП Филиал №1 Унитарного предприятия Вторичный щебень,Минск,https://ramenskoye.hh.ru/vacancy/41104896?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
-41065436,Инженер-конструктор,80000.0,120000.0,руб,ООО ТД Первый электротехнический,Москва,https://ramenskoye.hh.ru/vacancy/41065436?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
+41065436,Инженер-конструктор select,80000.0,120000.0,руб,ООО ТД Первый электротехнический,Москва,https://ramenskoye.hh.ru/vacancy/41065436?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
 41129452,Инженер-сметчик,500.0,,белруб,ООО ТехМедика,Минск,https://ramenskoye.hh.ru/vacancy/41129452?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
 40421299,Инженер по охране труда,100.0,,белруб,ООО Ресторация,Минск,https://ramenskoye.hh.ru/vacancy/40421299?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80
 41071503,Инженер-сметчик,,,,ООО ALLIANCEGROUP,Батуми,https://ramenskoye.hh.ru/vacancy/41071503?query=%D0%B8%D0%BD%D0%B6%D0%B5%D0%BD%D0%B5%D1%80

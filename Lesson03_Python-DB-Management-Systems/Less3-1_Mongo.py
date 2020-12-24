@@ -23,7 +23,14 @@ else:
 # ====================================================================================
 
 # 1... реализовать функцию, записывающую собранные вакансии в созданную БД
-def vacancy_to_db(vacancies, clt):
+# +3. Написать функцию, которая будет добавлять в вашу базу данных ТОЛЬКО новые вакансии с сайта
+def vacancy_to_db(vacancies, clt, repl=False):
+    '''
+    :param vacancies: pandas.DataFrame с новыми данными по вакансиям
+    :param clt: коллекция из БД MongoDB == <class 'pymongo.collection.Collection'>
+    :param repl: False(по умолч.) == добавляет только новые вакансии, True == обновляет все старые
+    :return: None
+    '''
     count = vacancies.count(axis=0)[0]
     for x in range(count):
         vacancy = dict(vacancies.iloc[x])
@@ -33,11 +40,30 @@ def vacancy_to_db(vacancies, clt):
         if clt.count_documents({'_id': vacancy['_id']}) == 0:
             # запись новой вакансии в БД
             clt.insert_one(vacancy)
-        # закомментировал == по условию задачи 3
+        # добавил repl == т.к. поведение по умолчанию не соответствует условию задачи 3 :
         # 3. Написать функцию, которая будет добавлять в вашу базу данных
         #    ТОЛЬКО новые вакансии с сайта.
-        # else:  # обновляет уже записанные в БД вакансии
-        #     clt.replace_one({'_id': vacancy['_id']}, vacancy)
+        elif repl:  # обновляет уже записанные в БД вакансии
+            clt.replace_one({'_id': vacancy['_id']}, vacancy)
+
+
+# 1++... реализовать функцию, записывающую собранные вакансии в созданную БД
+# +3. Написать функцию, которая будет добавлять в вашу базу данных ТОЛЬКО новые вакансии с сайта
+# посмотрел видео и решил добавить решение как у Рената :
+def vacancy_to_db_many(vacancies, clt, ups=False):
+    '''
+    :param vacancies: pandas.DataFrame с новыми данными по вакансиям
+    :param clt: коллекция из БД MongoDB == <class 'pymongo.collection.Collection'>
+    :param ups: upsert=True ==> добавление новых вакансий
+    :return: None
+    '''
+    count = vacancies.count(axis=0)[0]
+    for x in range(count):
+        vacancy = dict(vacancies.iloc[x])
+        vacancy_id = int(vacancy['_id'])
+        vacancy['_id'] = vacancy_id  # <class 'numpy.int64'> ==> <class 'int'>
+        # проверка наличия вакансии / обновление / upsert=True ==> добавление новых вакансий
+        clt.update_many({'_id': vacancy['_id']},{'$set': vacancy}, upsert=ups)
 
 
 # ====================================================================================
@@ -64,17 +90,22 @@ vacancies_sj_df = pd.read_csv(f'vacancies_{vacancy_name}_sj.csv')
 client = MongoClient('127.0.0.1', 27017)
 db = client['vacancies']
 
+# мое решение
 vacancy_to_db(vacancies_hh_df, db.hh)
 vacancy_to_db(vacancies_sj_df, db.sj)
 
-search_vacancy_max_salary(70000, db.hh)
-search_vacancy_max_salary(70000, db.sj)
+# проверка решения от Рената (добавил для роверки select в вакансии с '_id' = 41065436 и 35160473)
+# vacancy_to_db_many(vacancies_hh_df, db.hh, True)
+# vacancy_to_db_many(vacancies_sj_df, db.sj, True)
+
+# search_vacancy_max_salary(70000, db.hh)
+# search_vacancy_max_salary(70000, db.sj)
 
 # для проверки записи в БД выведем вакансии с '_id' = 41065436 и 35160473
-# for vc in db.hh.find({'_id': 41065436}):
-#     pprint(vc)
-# for vc in db.sj.find({'_id': 35160473}):
-#     pprint(vc)
+for vc in db.hh.find({'_id': 41065436}):
+    pprint(vc)
+for vc in db.sj.find({'_id': 35160473}):
+    pprint(vc)
 
 # вывод всех вакансий по HH из БД
 # for vc in db.hh.find({}):
