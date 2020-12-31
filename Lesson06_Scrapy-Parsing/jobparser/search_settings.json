@@ -1,0 +1,18 @@
+{
+    "hhru": {
+        "main_url": "https://hh.ru/search/vacancy?",
+        "profession": [
+            "Python"
+        ],
+        "cities": [
+            "МО"
+        ],
+        "start": "//div[@class='vacancy-serp-item__info']//a/@href",
+        "name": "//h1/text()",
+        "salary": "//p[@class='vacancy-salary']//span/text()",
+        "company": "//div[contains(@class,'vacancy-company')]",
+        "company_name": "//a[@data-qa='vacancy-company-name']//span/text()",
+        "company_address": "//span[@data-qa='vacancy-view-raw-address']/text()",
+        "next_page": "//a[contains(@class,'HH-Pager-Controls-Next')]/@href"
+    }
+}
