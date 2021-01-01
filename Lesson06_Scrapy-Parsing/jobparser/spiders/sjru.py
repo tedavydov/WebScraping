@@ -4,9 +4,11 @@ from scrapy.http.response.html import HtmlResponse
 from jobparser.items import JobparserItem
 
 
-class HhruSpider(scrapy.Spider):
-    name = 'hhru'
-    allowed_domains = ['hh.ru']
+class SjruSpider(scrapy.Spider):
+    name = 'sjru'
+    allowed_domains = ['superjob.ru']
+
+    # start_urls = ['http://superjob.ru/']
 
     def __init__(self, file_json="./search_settings.json"):
         res = self.load_urls(file_json)
@@ -25,19 +27,12 @@ class HhruSpider(scrapy.Spider):
 
     def vacancy_parse(self, response: HtmlResponse):
         link = response.url
-        start = link.find('hh.ru/vacancy/')
-        end = link.find('?')
-        if start >= 0:
-            start = start + 14
-        else:
-            start = link.find('hh.ru/employer/')
-            if start >= 0:
-                start = start + 15
-            else:
-                start = 0
+        end = link.find('.html')
         if end >= 0:
+            start = end - 8
             id = link[start:end]
         else:
+            start = 0
             id = link[start:]
         site = self.allowed_domains[0]
         # ==================================
@@ -46,6 +41,8 @@ class HhruSpider(scrapy.Spider):
         company_name = response.xpath(self.start_param[4]).extract()
         company_address = response.xpath(self.start_param[5]).extract()
         # ==================================
+        # yield JobparserItem(prof=profession, vacancy_name=vacancy_name, salary=salary, link=link, site=site,
+        #                             company_name=company_name, company_address=company_address)
         yield JobparserItem(_id=id, vacancy_name=vacancy_name, salary=salary, link=link, site=site,
                             company_name=company_name, company_address=company_address)
 
@@ -71,17 +68,17 @@ class HhruSpider(scrapy.Spider):
                 ss = json.load(json_file)
 
             if ss:
-                search_settings = ss.get('hhru')
+                search_settings = ss.get('sjru')
                 start_xpath = search_settings.get('start')
                 next_page_xpath = search_settings.get('next_page')
                 name_xpath = search_settings.get('name')
                 salary_xpath = search_settings.get('salary')
-                company_name_xpath = search_settings.get('company') + search_settings.get('company_name')
-                company_address_xpath = search_settings.get('company') + search_settings.get('company_address')
+                company_name_xpath = search_settings.get('company_name')
+                company_address_xpath = search_settings.get('company_address')
                 main_url = search_settings.get('main_url')
                 prof_s = search_settings.get('profession')
             else:
-                main_url = 'https://hh.ru/search/vacancy?'
+                main_url = 'superjob.ru/vacancy/search/?'
                 prof_s = ['Python']
             # ==================================
             prof_set = set({})
@@ -97,41 +94,54 @@ class HhruSpider(scrapy.Spider):
                     ci = None
                     city_str = str(city).lower()
                     if city_str == 'moscow':
-                        ci = '1'
+                        ci = '4'
                     elif city_str == 'москва':
-                        ci = '1'
+                        ci = '4'
                     elif city_str == 'питер':
-                        ci = '2'
+                        ci = 'spb'
                     elif city_str.find('петербург') >= 0:
-                        ci = '2'
+                        ci = 'spb'
                     elif city_str.find('petersburg') >= 0:
-                        ci = '2'
+                        ci = 'spb'
                     elif city_str.find('московская') >= 0:
-                        ci = '2019'
+                        ci = 'mo'
                     elif city_str == 'мо':
-                        ci = '2019'
+                        ci = 'mo'
+                    elif city_str == 'раменское':
+                        ci = 'ramenskoe'
+                    elif city_str == 'ramenskoe':
+                        ci = 'ramenskoe'
                     elif city_str.find('russian') >= 0:
-                        ci = '113'
+                        ci = 'russia'
                     elif city_str.find('российская') >= 0:
-                        ci = '113'
+                        ci = 'russia'
                     elif city_str == 'россия':
-                        ci = '113'
+                        ci = 'russia'
                     elif city_str == 'рф':
-                        ci = '113'
+                        ci = 'russia'
                     if ci:
                         city_set.add(ci)
             # ===========================================================================
-            url_tmp = main_url + 'text=python'
+            url_tmp = 'https://www.' + main_url + 'keywords=python&noGeo=1'
             if city_set or prof_set:
                 if prof_set:
                     for p in prof_set:
-                        par_text = 'text=' + str(p)
+                        par_text = 'keywords=' + str(p)
                         if city_set:
                             for c in city_set:
-                                url_tmp = main_url + par_text + '&area=' + str(c)
-                                urls.append(url_tmp)
+                                if isinstance(c, int):
+                                    url_tmp = 'https://www.' + main_url \
+                                              + par_text \
+                                              + 'geo=' + str(c)
+                                    urls.append(url_tmp)
+                                elif isinstance(c, str):
+                                    url_tmp = 'https://' + str(c) + '.' \
+                                              + main_url \
+                                              + par_text
+                                    urls.append(url_tmp)
                         else:
-                            url_tmp = main_url + par_text
+                            url_tmp = 'https://www.' + main_url \
+                                      + par_text + '&noGeo=1'
                             urls.append(url_tmp)
             # ===========================================================================
             else:

@@ -8,7 +8,6 @@ import scrapy
 
 class JobparserItem(scrapy.Item):
     # define the fields for your item here like:
-    # prof = scrapy.Field()
     vacancy_name = scrapy.Field()
     salary = scrapy.Field()
     salary_min = scrapy.Field()

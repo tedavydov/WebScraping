@@ -14,5 +14,21 @@
         "company_name": "//a[@data-qa='vacancy-company-name']//span/text()",
         "company_address": "//span[@data-qa='vacancy-view-raw-address']/text()",
         "next_page": "//a[contains(@class,'HH-Pager-Controls-Next')]/@href"
+    },
+    "sjru": {
+        "main_url": "superjob.ru/vacancy/search/?",
+        "profession": [
+            "Python"
+        ],
+        "cities": [
+            "Санкт-Петербург"
+        ],
+        "start": "//div[contains(@class,'vacancy-item')]//a[contains(@href,'/vakansii/')]/@href",
+        "name": "//h1/text()",
+        "salary": "//h1/../span",
+        "company": "",
+        "company_name": "//div[contains(@class,'undefined')]/a/h2/text()",
+        "company_address": "//h1/../div[contains(@class,'address')]/span/span/text()",
+        "next_page": "//a[contains(@class,'button-dalshe')]/@href"
     }
 }

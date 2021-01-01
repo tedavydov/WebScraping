@@ -14,7 +14,7 @@ class JobparserPipeline:
 
     def __init__(self):
         client = MongoClient('localhost', 27017)
-        self.mongo_base = client.vacancies_20201229
+        self.mongo_base = client.vacancies_20201231
 
     def process_item(self, item, spider):
         item['vacancy_name'] = self.process_string(item['vacancy_name'])
@@ -27,7 +27,6 @@ class JobparserPipeline:
         item['salary_comment'] = salary_res.get('comment')
         del item['salary']  # Удаляем ненужное поле в item
         collection = self.mongo_base[spider.name]
-        # collection.insert_one(item)
         collection.update_one({'_id': item['_id']}, {'$set': item}, upsert=True)
         return item
 
@@ -41,7 +40,9 @@ class JobparserPipeline:
 
         substring_res = ''
         if isinstance(substring, str):
-            lst = substring.split()
+            a = re.sub('\<.*?\>', ' ', substring, count=0)
+            b = re.sub('&nbsp;', ' ', a, count=0)
+            lst = b.split()
         elif isinstance(substring, list):
             lst = substring
         # ===========================================
@@ -50,17 +51,15 @@ class JobparserPipeline:
         # ========= sub_lst =========================
         sub_lst = []
         for s in lst:
-            a = s.replace('.', ' ')
+            a0 = re.sub('\<.*?\>', ' ', s, count=0)
+            b0 = re.sub('&nbsp;', ' ', a0, count=0)
+            a = b0.replace('.', ' ')
             b = a.replace(',', ' ')
             ss = b.replace(u'\xa0', u' ').split()
             for x in ss:
                 if x:
                     xx = x.strip()
-                    try:
-                        d = int(xx)
-                        sub_lst.append(d)
-                    except (ValueError, TypeError):
-                        sub_lst.append(xx)
+                    sub_lst.append(xx)
         # ========= sub_lst =========================
         flag_s = True
         # считаем что строка не должна начинаться с числа (даже в названии фирмы )
@@ -93,7 +92,8 @@ class JobparserPipeline:
         # ========= sub_lst =========================
         sub_lst = []
         for s in lst:
-            ss = s.replace(u'\xa0', u' ').split()
+            a = self.process_string(s)
+            ss = a.split()
             for x in ss:
                 if x:
                     l = x.lower()
@@ -101,29 +101,27 @@ class JobparserPipeline:
         # ========= sub_lst =========================
         key = 'min'
         val_str = ""
-        flag_d = True
+        flag_d_min = True
+        flag_d_max = True
         x_prev = None
         for s in sub_lst:
             x = s.strip()
-            if ((x == 'до') or (x == '-')) and (key == 'min'):
+            if (x in ['до', '-', '—']) and (key == 'min'):
                 key = 'max'
             # ===============
             else:
-                try:  # x - трехзначное число
-                    if len(x) == 3:
-                        d = int(x)
-                        if flag_d:
-                            salary_dict[key] = d
-                            flag_d = False
-                        else:
-                            salary_dict[key] = (salary_dict.get(key) * 1000) + d
-                            flag_d = True
-                    else:  # проверим что текущий x - это число
-                        d = int(x)
+                try:  # если x - это число
+                    d = int(x)
+                    if flag_d_min and (key == 'min'):
                         salary_dict[key] = d
-                        flag_d = False
-                except (ValueError, TypeError):  # предыдущий и/или текущий x - не числа
-                    if (len(x) <= 4) and not (x in ['от', 'до', 'не', 'з/п', 'на', 'руки', '-']):
+                        flag_d_min = False
+                    elif flag_d_max and (key == 'max'):
+                        salary_dict[key] = d
+                        flag_d_max = False
+                    else:
+                        salary_dict[key] = (salary_dict.get(key) * 1000) + d
+                except (ValueError, TypeError):  # текущий x - не число
+                    if (len(x) <= 4) and not (x in ['от', 'до', 'по', 'не', 'з/п', 'на', 'руки', '/', '-', '—']):
                         # элемент валюты не более 4 знаков
                         key = 'val'
                         if (x == 'руб.') or (x == 'руб'):
@@ -136,7 +134,7 @@ class JobparserPipeline:
                         salary_dict[key] = val_str
                     else:  # len(x) > 4  и x - не число, int(x) - выдало ошибку
                         # текущий x - скорее всего не валюта, пишем в комментарий
-                        if not (x in ['от', 'руб.', 'руб', 'usd', 'eur', '-']):
+                        if not (x in ['от', 'руб.', 'руб', 'usd', 'eur', '-', '—']):
                             if salary_dict.get('comment'):
                                 salary_dict['comment'] = salary_dict.get('comment') + ' ' + x
                             else:  # комментарий пустой
@@ -144,7 +142,7 @@ class JobparserPipeline:
                                     int(x_prev)
                                     salary_dict['comment'] = x
                                 except (ValueError, TypeError):  # предыдущий x - не число
-                                    if x_prev and not (x_prev in ['от', 'руб.', 'руб', 'usd', 'eur', '-']):
+                                    if x_prev and not (x_prev in ['от', 'руб.', 'руб', 'usd', 'eur', '-', '—']):
                                         salary_dict['comment'] = x_prev + ' ' + x
                                     else:
                                         salary_dict['comment'] = x
