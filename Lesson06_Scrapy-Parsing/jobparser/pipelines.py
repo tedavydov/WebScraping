@@ -14,7 +14,7 @@ class JobparserPipeline:
 
     def __init__(self):
         client = MongoClient('localhost', 27017)
-        self.mongo_base = client.vacancies_20201231
+        self.mongo_base = client.vacancies_20210101
 
     def process_item(self, item, spider):
         item['vacancy_name'] = self.process_string(item['vacancy_name'])

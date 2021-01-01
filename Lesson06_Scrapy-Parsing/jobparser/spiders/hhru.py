@@ -9,6 +9,7 @@ class HhruSpider(scrapy.Spider):
     allowed_domains = ['hh.ru']
 
     def __init__(self, file_json="./search_settings.json"):
+        super(HhruSpider, self).__init__()
         res = self.load_urls(file_json)
         self.start_urls = res[0]
         self.start_param = res[1:]

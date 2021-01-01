@@ -11,6 +11,7 @@ class SjruSpider(scrapy.Spider):
     # start_urls = ['http://superjob.ru/']
 
     def __init__(self, file_json="./search_settings.json"):
+        super(SjruSpider, self).__init__()
         res = self.load_urls(file_json)
         self.start_urls = res[0]
         self.start_param = res[1:]
