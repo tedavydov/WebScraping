@@ -1,0 +1,22 @@
+{
+    "lmru": {
+        "start_urls": ["https://leroymerlin.ru"],
+        "domains": ["leroymerlin.ru"],
+        "search_keys": {
+            "обои": ["10837=Красный"],
+            "фанера": []
+        },
+        "main": "//a[@slot='name']/@href",
+        "photos": "//picture/source[1]/@data-origin",
+        "prod_name": "//div[contains(@class,'container')]//h1/text()",
+        "price": "//uc-pdp-price-view[contains(@slot,'primary-price')]//span[@slot='price']/text()",
+        "price_currency": "//uc-pdp-price-view[contains(@slot,'primary-price')]//span[@slot='currency']/text()",
+        "price_primary_unit": "//uc-pdp-price-view[contains(@slot,'primary-price')]//span[@slot='unit']/text()",
+        "price_secondary": "//uc-pdp-price-view[contains(@slot,'second-price')]//span[@slot='price']/text()",
+        "price_secondary_unit": "//uc-pdp-price-view[contains(@slot,'second-price')]//span[@slot='unit']/text()",
+        "characteristics": "//dl[contains(@class,'def-list')]",
+        "characteristic_names": "//dt/text()",
+        "characteristic_values": "//dd/text()",
+        "next_page": "//a[contains(@class,'next-paginator-button')]/@href"
+    }
+}
