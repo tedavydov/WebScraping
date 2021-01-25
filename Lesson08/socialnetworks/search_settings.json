@@ -1,0 +1,18 @@
+{
+    "inst": {
+        "start_urls": ["https://www.instagram.com/"],
+        "domains": ["instagram.com"],
+        "inst_login_link": "https://www.instagram.com/accounts/login/ajax/",
+        "inst_login": "==================inst_login=======================",
+        "inst_password": "===============inst_password====================",
+        "parse_user":[
+            "andheshootandhescores",
+            "adagaletejes"
+        ],
+        "graphql_url": "https://www.instagram.com/graphql/query/?",
+        "posts_hash": {
+            "Подписчики": "5aefa9893005572d237da5068082d8d5",
+            "Подписки":  "3dec7e2c57367ef3da3d987d89f9dbc8"
+        }
+    }
+}
